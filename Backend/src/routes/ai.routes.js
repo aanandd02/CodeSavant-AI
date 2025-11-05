@@ -1,3 +1,4 @@
+// src/routes/ai.routes.js
 const express = require("express");
 const aiService = require("../services/ai.service");
 
@@ -8,17 +9,21 @@ router.post("/get-review", async (req, res) => {
   try {
     const { code } = req.body;
 
-    // Validation (earlier validateRequest.js ka kaam)
+    // Validation
     if (!code || typeof code !== "string") {
-      return res.status(400).json({ error: "Valid 'code' is required in request body." });
+      return res
+        .status(400)
+        .json({ error: "Valid 'code' is required in request body." });
     }
 
-    // Call AI service (earlier ai.controller.js ka kaam)
+    // Call AI service
     const review = await aiService(code);
     res.json({ review });
   } catch (error) {
-    console.error("AI Review Error:", error);
-    res.status(500).json({ error: "Something went wrong while reviewing code." });
+    console.error("🔥 AI Review Error:", error);
+    res
+      .status(500)
+      .json({ error: "Something went wrong while reviewing code." });
   }
 });
 
