@@ -1,3 +1,4 @@
+// server.js
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
@@ -13,12 +14,13 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 
-// -------------------- Rate Limiting --------------------
-app.use(rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 min
-  max: 100,
-  message: { error: "Too many requests, please try again later." },
-}));
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 min
+    max: 100,
+    message: { error: "Too many requests, please try again later." },
+  })
+);
 
 // -------------------- Routes --------------------
 app.get("/", (req, res) => {

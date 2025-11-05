@@ -42,11 +42,7 @@ function Header() {
 
       {isAuthenticated && (
         <div className="header-right">
-          <img
-            src={user.picture}
-            alt="profile"
-            className="user-pic"
-          />
+          <img src={user.picture} alt="profile" className="user-pic" />
           <span className="user-info">
             {user.name} ({user.email})
           </span>

@@ -6,6 +6,7 @@ import LeftPanel from "./Components/LeftPanel";
 import RightPanel from "./Components/RightPanel";
 import { useAuth0 } from "@auth0/auth0-react";
 
+// ---------- Default Code for Each Language ----------
 const getDefaultCodeForLanguage = (lang) => {
   switch (lang) {
     case "javascript":
@@ -21,11 +22,24 @@ const getDefaultCodeForLanguage = (lang) => {
   }
 };
 
+// ---------- Code Validation Helper ----------
 function isLikelyCode(input) {
-  const codeTokens = ["function", "{", "}", ";", "#include", "public class", "int main", "printf", "console.log", "=>"];
+  const codeTokens = [
+    "function",
+    "{",
+    "}",
+    ";",
+    "#include",
+    "public class",
+    "int main",
+    "printf",
+    "console.log",
+    "=>",
+  ];
   return codeTokens.some((token) => input.includes(token));
 }
 
+// ---------- Main App Component ----------
 function App() {
   const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
 
@@ -34,14 +48,21 @@ function App() {
   const [review, setReview] = useState("");
   const [isReviewing, setIsReviewing] = useState(false);
 
-  // Auto login
+  // ---------- Auto-login ----------
   useEffect(() => {
     if (!isAuthenticated && !isLoading) {
       loginWithRedirect({ prompt: "select_account" });
     }
   }, [isAuthenticated, isLoading, loginWithRedirect]);
 
-  // ------------------ Review Function ------------------
+  // ---------- Smart Base URL ----------
+  const BASE_URL =
+    import.meta.env.VITE_API_BASE_URL ||
+    (window.location.hostname === "localhost"
+      ? "http://localhost:3000"
+      : "https://codesavant-ai.onrender.com");
+
+  // ---------- Review Function ----------
   async function reviewCode() {
     if (!isLikelyCode(code)) {
       setReview("⚠️ Please provide valid code for analysis.");
@@ -52,31 +73,43 @@ function App() {
     setReview("");
 
     try {
-      const response = await axios.post("https://codesavant-ai.onrender.com/ai/get-review", { code, language });
+      const response = await axios.post(`${BASE_URL}/ai/get-review`, {
+        code,
+        language,
+      });
+
       setReview(response.data.review);
     } catch (error) {
+      console.error("🔥 Frontend fetch error:", error);
+      if (error.response) {
+        console.error("Backend message:", error.response.data);
+      }
       setReview("❌ Error fetching review. Try again.");
+    } finally {
+      setIsReviewing(false);
     }
-
-    setIsReviewing(false);
   }
 
+  // ---------- Handle Language Change ----------
   function handleLanguageChange(e) {
     const selectedLang = e.target.value;
     setLanguage(selectedLang);
     const defaultCode = getDefaultCodeForLanguage(selectedLang);
     setCode(defaultCode);
-    setReview(""); // Clear previous review on language change
+    setReview(""); // Clear old review when language changes
   }
 
+  // ---------- Apply Corrected Code ----------
   function applyCorrectedCode(corrected) {
     setCode(corrected);
     setReview(""); // Reset review so user can recheck
   }
 
+  // ---------- Loading & Auth ----------
   if (isLoading) return <h2 style={{ textAlign: "center" }}>Loading...</h2>;
   if (!isAuthenticated) return null;
 
+  // ---------- UI ----------
   return (
     <>
       <Header />
