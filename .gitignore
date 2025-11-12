@@ -4,8 +4,8 @@ Backend/node_modules/
 
 # # Ignore environment files
 .env
-# Backend/.env
-# Frontend/.env
+Backend/.env
+Frontend/.env
 
 # Ignore system files
 .DS_Store
