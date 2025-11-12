@@ -72,7 +72,7 @@ function RightPanel({ isReviewing, review, applyCorrectedCode }) {
               className="apply-code-btn"
               onClick={() => applyCorrectedCode(fixedCode)}
             >
-              Recheck
+              Fix
             </button>
           </div>
         </div>

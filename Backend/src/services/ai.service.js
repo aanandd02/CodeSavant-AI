@@ -18,11 +18,11 @@ const reviewPrompt = ChatPromptTemplate.fromMessages([
     1. Detect mistakes (syntax, undefined vars, logical/performance issues).
     2. Suggest improvements (best practices, readability, optimization).
     3. Always provide the final corrected code ONLY inside one code block.
-       ❌ Do NOT write any extra heading like "Corrected Code", "Improved Code" etc.
+       ❌ Do NOT write any extra heading like "Corrected Code" etc.
     4. Format response as:
        - **Mistakes/Issues**
        - **Improvements**
-       - Then directly the corrected code block.
+       - Then the corrected code block.
   `,
   ],
   ["human", "{code}"],
@@ -34,7 +34,7 @@ async function generateReview(code) {
     const response = await chain.invoke({ code });
     let content = response.content;
 
-    // Clean up unwanted headings
+    // Clean formatting
     content = content.replace(/(\*\*Corrected Code\*\*:?)/gi, "").trim();
     content = content.replace(/(\*\*Improved Code\*\*:?)/gi, "").trim();
 
