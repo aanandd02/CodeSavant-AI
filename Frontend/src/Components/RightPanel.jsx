@@ -7,57 +7,83 @@ import "./RightPanel.css";
 function RightPanel({ isReviewing, review, applyCorrectedCode }) {
   if (isReviewing) {
     return (
-      <div className="right-panel">
-        <div className="loading">🔍 Analyzing code...</div>
-      </div>
+      <section className="right-panel">
+        <div className="loading-state">
+          <div className="spinner" />
+          <div>
+            <h2>Analyzing your code…</h2>
+            <p>Finding bugs, edge cases and improvement opportunities.</p>
+          </div>
+        </div>
+      </section>
     );
   }
 
   if (!review) {
     return (
-      <div className="right-panel">
-        <div className="welcome-text">
-          👋 Welcome to <b>CodeSavant-AI</b>! Paste your code on the left and click <b>Review</b>.
+      <section className="right-panel">
+        <div className="welcome-card">
+          <div className="welcome-badge">AI REVIEW WORKSPACE</div>
+          <h2>Get a senior engineer-style code review in seconds.</h2>
+          <p>
+            Paste any function, file or snippet on the left and hit{" "}
+            <strong>Run Review</strong>. You&apos;ll see:
+          </p>
+          <ul>
+            <li>🔴 Clear explanation of mistakes</li>
+            <li>💡 Suggestions & best practices</li>
+            <li>🛠 A corrected, production-ready version</li>
+          </ul>
+          <div className="welcome-footnote">
+            Designed for JavaScript, C, C++ and Java codebases.
+          </div>
         </div>
-      </div>
+      </section>
     );
   }
 
-  // Extract corrected code
   const codeMatch = review.match(/```[\s\S]*?```/);
-  const fixedCode = codeMatch ? codeMatch[0].replace(/```[a-z]*\n?|\n?```/g, "") : "";
+  const fixedCode = codeMatch
+    ? codeMatch[0].replace(/```[a-z]*\n?|\n?```/g, "")
+    : "";
   const textReview = review.replace(/```[\s\S]*?```/g, "").trim();
 
-  // Split review into sections by heading emojis
-  const sections = textReview.split(/\n(?=[🔴💡🛠])/).map((s) => s.trim());
+  const sections = textReview
+    .split(/\n(?=[🔴💡🛠])/)
+    .map((s) => s.trim())
+    .filter(Boolean);
 
   return (
-    <div className="right-panel">
-      {sections.length > 0 && (
-        <div className="review-text">
-          {sections.map((section, idx) => {
-            let className = "";
-            if (section.startsWith("🔴")) className = "mistakes";
-            else if (section.startsWith("💡")) className = "suggestions";
-            else if (section.startsWith("🛠")) className = "correction";
+    <section className="right-panel">
+      <div className="review-text">
+        {sections.map((section, idx) => {
+          let className = "section-neutral";
+          if (section.startsWith("🔴")) className = "section-errors";
+          else if (section.startsWith("💡")) className = "section-suggestions";
+          else if (section.startsWith("🛠")) className = "section-fix";
 
-            // Remove emoji for clean text
-            const cleanText = section.replace(/🔴|💡|🛠/g, "").trim();
+          const cleanText = section.replace(/^[🔴💡🛠]\s?/, "").trim();
 
-            return (
-              <div key={idx} className={className}>
-                <ReactMarkdown>{cleanText}</ReactMarkdown>
-              </div>
-            );
-          })}
-        </div>
-      )}
+          return (
+            <div key={idx} className={`review-section ${className}`}>
+              <ReactMarkdown>{cleanText}</ReactMarkdown>
+            </div>
+          );
+        })}
+      </div>
 
       {fixedCode && (
         <div className="fixed-code-block">
-          <h3>✅ Corrected / Improved Code</h3>
+          <div className="fixed-header">
+            <h3>✅ Corrected / Improved Code</h3>
+            <p>Copy or apply the fix directly to your editor.</p>
+          </div>
           <div className="scrollable-code">
-            <SyntaxHighlighter language="javascript" style={vscDarkPlus} showLineNumbers>
+            <SyntaxHighlighter
+              language="javascript"
+              style={vscDarkPlus}
+              showLineNumbers
+            >
               {fixedCode}
             </SyntaxHighlighter>
           </div>
@@ -66,18 +92,18 @@ function RightPanel({ isReviewing, review, applyCorrectedCode }) {
               className="copy-code-btn"
               onClick={() => navigator.clipboard.writeText(fixedCode)}
             >
-              Copy
+              Copy to clipboard
             </button>
             <button
               className="apply-code-btn"
               onClick={() => applyCorrectedCode(fixedCode)}
             >
-              Fix
+              Apply to editor
             </button>
           </div>
         </div>
       )}
-    </div>
+    </section>
   );
 }
 

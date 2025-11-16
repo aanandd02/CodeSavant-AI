@@ -1,8 +1,7 @@
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import Editor from "react-simple-code-editor";
 import prism from "prismjs";
 import "prismjs/themes/prism-tomorrow.css";
-import "highlight.js/styles/github-dark.css";
 import "./LeftPanel.css";
 import "prismjs/components/prism-c";
 import "prismjs/components/prism-cpp";
@@ -18,61 +17,71 @@ function LeftPanel({
 }) {
   const editorRef = useRef(null);
 
-  useEffect(() => {
-    prism.highlightAll();
-  }, [language]);
-
-  useEffect(() => {
-    if (editorRef.current) {
-      editorRef.current.scrollTop = editorRef.current.scrollHeight;
-    }
-  }, [code]);
-
   return (
-    <div className="left-panel">
-      <div className="top-bar">
-        <div className="language-select-container">
-          <label htmlFor="language-select">Language:</label>
-          <select
-            id="language-select"
-            value={language}
-            onChange={handleLanguageChange}
-          >
-            <option value="javascript">JavaScript</option>
-            <option value="c">C</option>
-            <option value="cpp">C++</option>
-            <option value="java">Java</option>
-          </select>
+    <section className="left-panel">
+      <div className="panel-header">
+        <div className="panel-title-block">
+          <h2 className="panel-title">Your Code</h2>
+          <p className="panel-subtitle">
+            Paste or type your snippet. CodeSavant-AI will review it line by
+            line.
+          </p>
         </div>
-        <div
-          onClick={!isReviewing ? reviewCode : undefined}
-          className={`review-button ${isReviewing ? "disabled" : ""}`}
-        >
-          {isReviewing ? "Reviewing..." : "Review"}
+
+        <div className="panel-controls">
+          <div className="language-select-container">
+            <label htmlFor="language-select">Language</label>
+            <select
+              id="language-select"
+              value={language}
+              onChange={handleLanguageChange}
+            >
+              <option value="javascript">JavaScript</option>
+              <option value="c">C</option>
+              <option value="cpp">C++</option>
+              <option value="java">Java</option>
+            </select>
+          </div>
+
+          <button
+            onClick={!isReviewing ? reviewCode : undefined}
+            className={`review-button ${isReviewing ? "disabled" : ""}`}
+          >
+            {isReviewing ? "Reviewing..." : "Run Review"}
+          </button>
         </div>
       </div>
 
-      <div className="editor-container" ref={editorRef}>
+      <div className="editor-shell" ref={editorRef}>
         <Editor
           value={code}
           onValueChange={(newCode) => setCode(newCode)}
-          highlight={(code) =>
+          highlight={(value) =>
             prism.highlight(
-              code,
+              value,
               prism.languages[language] || prism.languages.javascript,
               language
             )
           }
-          padding={10}
+          padding={14}
+          textareaClassName="code-editor-textarea"
           style={{
-            fontFamily: '"Fira code", "Fira Mono", monospace',
-            fontSize: 16,
+            fontFamily: '"Fira Code", "Fira Mono", monospace',
+            fontSize: 14,
             width: "100%",
             minHeight: "100%",
           }}
+          autoCapitalize="off"
+          autoCorrect="off"
+          spellCheck={false}
         />
       </div>
-    </div>
+
+      <div className="panel-footer-hint">
+        Tip: Paste production code and see detailed mistakes, suggestions and a
+        fixed version on the right.
+      </div>
+    </section>
   );
 }
 

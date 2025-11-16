@@ -1,40 +1,115 @@
-* {
-  margin: 0;
-  padding: 0;
+:root {
+  --bg-main: #050816;
+  --bg-elevated: rgba(15, 23, 42, 0.9);
+  --bg-elevated-soft: rgba(15, 23, 42, 0.75);
+  --accent: #8b5cf6;
+  --accent-soft: rgba(139, 92, 246, 0.75);
+  --accent-strong: #6366f1;
+  --text-main: #e5e7eb;
+  --text-soft: #9ca3af;
+  --border-subtle: rgba(148, 163, 184, 0.25);
+  --danger: #fb7185;
+}
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
-  width: 100%;
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  background-color: #242424;
-  color: rgba(255, 255, 255, 0.87);
 }
 
-main {
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Segoe UI", sans-serif;
+
+  /* 🔥 FIX 1 — stabilize background to prevent subpixel jitter */
+  background: radial-gradient(circle at top, #1f2933 0%, #020617 45%, #000 100%);
+  background-attachment: fixed; /* IMPORTANT */
+
+  color: var(--text-main);
+
+  /* GPU stability */
+  transform: translateZ(0);
+  will-change: auto;
+}
+
+/* 🔥 FIX 2 — GPU caching for gradient layers */
+.app-bg {
+  position: fixed;
+  inset: 0;
+
+  /* smoother gradients: 50% → 60% to prevent shimmering */
+  background: radial-gradient(circle at 0% 0%, #4f46e5 0%, transparent 60%),
+    radial-gradient(circle at 100% 100%, #7c3aed 0%, transparent 60%);
+
+  opacity: 0.16;
+  pointer-events: none;
+  z-index: -2;
+
+  transform: translateZ(0);
+  will-change: opacity, transform;
+}
+
+.app-overlay {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(
+    145deg,
+    rgba(15, 23, 42, 0.92),
+    rgba(15, 23, 42, 0.98)
+  );
+  z-index: -1;
+
+  transform: translateZ(0);
+  will-change: opacity, transform;
+}
+
+/* Main shell */
+.app-shell {
+  min-height: 100vh;
   display: flex;
-  height: calc(100vh - 70px); 
-  width: 100%;
-  overflow: hidden;
+  flex-direction: column;
 }
 
-main > * {
-  flex: 1;                   
-  min-width: 0;
-  overflow: auto;
-  padding: 1rem;
+/* Main layout */
+main {
+  flex: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 18px 18px 40px;
+  display: flex;
+  gap: 18px;
 }
 
-/* ✅ Tablet & Mobile responsive */
-@media (max-width: 1024px) {
+/* Two-panel on mobile */
+@media (max-width: 900px) {
   main {
     flex-direction: column;
-    height: auto;
+    padding-inline: 14px;
   }
+}
 
-  main > * {
-    padding: 0.8rem;
-    min-height: 50vh;
-  }
+/* Clean scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.9);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.7);
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(209, 213, 219, 0.9);
 }

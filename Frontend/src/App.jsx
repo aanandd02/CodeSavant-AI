@@ -1,12 +1,19 @@
+// App.jsx
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./App.css";
+
 import Header from "./Components/Header";
 import LeftPanel from "./Components/LeftPanel";
 import RightPanel from "./Components/RightPanel";
+
 import { useAuth0 } from "@auth0/auth0-react";
 
-// ---------- Default Code for Each Language ----------
+import { Routes, Route } from "react-router-dom";
+import Docs from "./pages/Docs";
+import Changelog from "./pages/Changelog";
+
+// -------------------------- Default Code For Languages --------------------------
 const getDefaultCodeForLanguage = (lang) => {
   switch (lang) {
     case "javascript":
@@ -22,7 +29,7 @@ const getDefaultCodeForLanguage = (lang) => {
   }
 };
 
-// ---------- Code Validation Helper ----------
+// -------------------------- Check If It's Code --------------------------
 function isLikelyCode(input) {
   const codeTokens = [
     "function",
@@ -39,8 +46,8 @@ function isLikelyCode(input) {
   return codeTokens.some((token) => input.includes(token));
 }
 
-// ---------- Main App Component ----------
-function App() {
+// -------------------------- Main App Component --------------------------
+export default function App() {
   const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
 
   const [language, setLanguage] = useState("javascript");
@@ -48,21 +55,21 @@ function App() {
   const [review, setReview] = useState("");
   const [isReviewing, setIsReviewing] = useState(false);
 
-  // ---------- Auto-login ----------
+  // Auto login
   useEffect(() => {
     if (!isAuthenticated && !isLoading) {
       loginWithRedirect({ prompt: "select_account" });
     }
   }, [isAuthenticated, isLoading, loginWithRedirect]);
 
-  // ---------- Smart Base URL ----------
+  // Smart base URL
   const BASE_URL =
     import.meta.env.VITE_API_BASE_URL ||
     (window.location.hostname === "localhost"
       ? "http://localhost:3000"
       : "https://codesavant-ai.onrender.com");
 
-  // ---------- Review Function ----------
+  // Run Review
   async function reviewCode() {
     if (!isLikelyCode(code)) {
       setReview("⚠️ Please provide valid code for analysis.");
@@ -81,57 +88,69 @@ function App() {
       setReview(response.data.review);
     } catch (error) {
       console.error("🔥 Frontend fetch error:", error);
-      if (error.response) {
-        console.error("Backend message:", error.response.data);
-      }
+      if (error.response) console.error("Backend said:", error.response.data);
       setReview("❌ Error fetching review. Try again.");
     } finally {
       setIsReviewing(false);
     }
   }
 
-  // ---------- Handle Language Change ----------
+  // Change Language
   function handleLanguageChange(e) {
     const selectedLang = e.target.value;
     setLanguage(selectedLang);
-    const defaultCode = getDefaultCodeForLanguage(selectedLang);
-    setCode(defaultCode);
-    setReview(""); // Clear old review when language changes
+    setCode(getDefaultCodeForLanguage(selectedLang));
+    setReview("");
   }
 
-  // ---------- Apply Corrected Code ----------
+  // Apply Code
   function applyCorrectedCode(corrected) {
     setCode(corrected);
-    setReview(""); // Reset review so user can recheck
+    setReview("");
   }
 
-  // ---------- Loading & Auth ----------
+  // If still loading auth
   if (isLoading) return <h2 style={{ textAlign: "center" }}>Loading...</h2>;
   if (!isAuthenticated) return null;
 
-  // ---------- UI ----------
+  // ---------------------------------- UI -----------------------------------
   return (
-    <>
+    <div className="app-shell">
+      <div className="app-bg" />
+      <div className="app-overlay" />
+
       <Header />
 
-      <main>
-        <LeftPanel
-          language={language}
-          code={code}
-          setCode={setCode}
-          isReviewing={isReviewing}
-          reviewCode={reviewCode}
-          handleLanguageChange={handleLanguageChange}
+      <Routes>
+        {/* ------------------- MAIN PLAYGROUND PAGE ------------------- */}
+        <Route
+          path="/"
+          element={
+            <main>
+              <LeftPanel
+                language={language}
+                code={code}
+                setCode={setCode}
+                isReviewing={isReviewing}
+                reviewCode={reviewCode}
+                handleLanguageChange={handleLanguageChange}
+              />
+
+              <RightPanel
+                isReviewing={isReviewing}
+                review={review}
+                applyCorrectedCode={applyCorrectedCode}
+              />
+            </main>
+          }
         />
 
-        <RightPanel
-          isReviewing={isReviewing}
-          review={review}
-          applyCorrectedCode={applyCorrectedCode}
-        />
-      </main>
-    </>
+        {/* ------------------- DOCS PAGE ------------------- */}
+        <Route path="/docs" element={<Docs />} />
+
+        {/* ------------------- CHANGELOG PAGE ------------------- */}
+        <Route path="/changelog" element={<Changelog />} />
+      </Routes>
+    </div>
   );
 }
-
-export default App;
