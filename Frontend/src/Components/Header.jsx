@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { Link } from "react-router-dom";   
+import { Link } from "react-router-dom";
 import "./Header.css";
 
 export default function Header() {
@@ -8,10 +8,11 @@ export default function Header() {
   const [index, setIndex] = useState(0);
   const [isErasing, setIsErasing] = useState(false);
 
+  const [menuOpen, setMenuOpen] = useState(false); // NEW
+
   const text = "Turning Code into Confidence";
   const { logout, isAuthenticated } = useAuth0();
 
-  
   useEffect(() => {
     const typingSpeed = isErasing ? 60 : 90;
     const pauseBeforeErase = 1000;
@@ -38,6 +39,8 @@ export default function Header() {
   return (
     <header className="app-header no-jitter">
       <div className="app-header-inner">
+        
+        {/* LEFT */}
         <div className="header-left">
           <div className="logo-mark">CS</div>
 
@@ -51,12 +54,25 @@ export default function Header() {
           </div>
         </div>
 
+        {/* RIGHT */}
         <div className="header-right">
-          <nav className="header-nav">
+
+          {/* DESKTOP NAV */}
+          <nav className="header-nav desktop-nav">
             <Link to="/" className="nav-pill">Playground</Link>
             <Link to="/docs" className="nav-pill nav-pill-soft">Docs</Link>
             <Link to="/changelog" className="nav-pill nav-pill-soft">Changelog</Link>
           </nav>
+
+          {/* HAMBURGER ICON */}
+          <div
+            className="hamburger"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            <div className={menuOpen ? "line open" : "line"}></div>
+            <div className={menuOpen ? "line open" : "line"}></div>
+            <div className={menuOpen ? "line open" : "line"}></div>
+          </div>
 
           {isAuthenticated && (
             <button
@@ -67,6 +83,13 @@ export default function Header() {
             </button>
           )}
         </div>
+      </div>
+
+      {/* MOBILE MENU */}
+      <div className={`mobile-menu ${menuOpen ? "show" : ""}`}>
+        <Link to="/" onClick={() => setMenuOpen(false)}>Playground</Link>
+        <Link to="/docs" onClick={() => setMenuOpen(false)}>Docs</Link>
+        <Link to="/changelog" onClick={() => setMenuOpen(false)}>Changelog</Link>
       </div>
     </header>
   );

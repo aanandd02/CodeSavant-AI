@@ -85,9 +85,7 @@
 }
 
 @keyframes blink {
-  50% {
-    opacity: 0;
-  }
+  50% { opacity: 0; }
 }
 
 .header-right {
@@ -125,44 +123,62 @@
   color: #e5e7eb;
 }
 
-.nav-pill:hover {
-  transform: translateY(-2px) translateZ(0);
-  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.55);
-}
+/* ------------ HAMBURGER ------------ */
 
-.logout-btn {
-  padding: 6px 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(248, 113, 113, 0.7);
-  background: linear-gradient(to bottom, #fb7185, #ef4444);
-  color: white;
-  font-size: 0.78rem;
+.hamburger {
+  width: 28px;
+  height: 20px;
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
   cursor: pointer;
-  transition: all 0.2s ease;
-  font-weight: 500;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap;
-  transform: translateZ(0);
 }
 
-.logout-btn:hover {
-  transform: translateY(-2px) scale(1.02) translateZ(0);
-  box-shadow: 0 10px 24px rgba(248, 113, 113, 0.7);
+.line {
+  width: 100%;
+  height: 3px;
+  background: #fff;
+  border-radius: 4px;
+  transition: 0.3s;
 }
+
+.line.open:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+.line.open:nth-child(2) {
+  opacity: 0;
+}
+.line.open:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+/* ------------ MOBILE MENU ------------ */
+
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  background: rgba(15, 23, 42, 0.95);
+  padding: 14px 20px;
+}
+
+.mobile-menu a {
+  color: #fff;
+  padding: 10px 0;
+  font-size: 0.85rem;
+}
+
+.mobile-menu.show {
+  display: flex;
+}
+
+/* ------------ RESPONSIVE ------------ */
 
 @media (max-width: 768px) {
-  .app-header-inner {
-    border-radius: 18px;
-    padding-inline: 12px;
-  }
-
-  .header-title {
-    font-size: 1.05rem;
-  }
-
   .header-nav {
     display: none;
+  }
+
+  .hamburger {
+    display: flex;
   }
 }
