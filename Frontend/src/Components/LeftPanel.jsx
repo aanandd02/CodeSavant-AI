@@ -1,8 +1,11 @@
 import React, { useRef } from "react";
 import Editor from "react-simple-code-editor";
 import prism from "prismjs";
+import { motion } from "framer-motion";
+
 import "prismjs/themes/prism-tomorrow.css";
 import "./LeftPanel.css";
+
 import "prismjs/components/prism-c";
 import "prismjs/components/prism-cpp";
 import "prismjs/components/prism-java";
@@ -43,12 +46,21 @@ function LeftPanel({
             </select>
           </div>
 
-          <button
-            onClick={!isReviewing ? reviewCode : undefined}
+          {/* Animated Review Button */}
+          <motion.button
             className={`review-button ${isReviewing ? "disabled" : ""}`}
+            onClick={!isReviewing ? reviewCode : undefined}
+            whileHover={!isReviewing ? { scale: 1.08 } : {}}
+            whileTap={!isReviewing ? { scale: 0.92 } : {}}
+            animate={
+              isReviewing
+                ? { opacity: 0.7, scale: 0.97 }
+                : { opacity: 1, scale: 1 }
+            }
+            transition={{ duration: 0.25, ease: "easeOut" }}
           >
             {isReviewing ? "Reviewing..." : "Run Review"}
-          </button>
+          </motion.button>
         </div>
       </div>
 

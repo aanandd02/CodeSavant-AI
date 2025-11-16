@@ -9,9 +9,35 @@ import RightPanel from "./Components/RightPanel";
 
 import { useAuth0 } from "@auth0/auth0-react";
 
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Docs from "./pages/Docs";
 import Changelog from "./pages/Changelog";
+
+import { AnimatePresence, motion } from "framer-motion";
+
+// -------------------------- Page Wrapper (NO SHRINKING + SMOOTH) --------------------------
+function PageWrapper({ children }) {
+  return (
+    <motion.div
+      style={{
+        width: "100%",
+        height: "100%",
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+      }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{
+        duration: 0.35,
+        ease: "easeInOut",
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 // -------------------------- Default Code For Languages --------------------------
 const getDefaultCodeForLanguage = (lang) => {
@@ -49,6 +75,7 @@ function isLikelyCode(input) {
 // -------------------------- Main App Component --------------------------
 export default function App() {
   const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
+  const location = useLocation();
 
   const [language, setLanguage] = useState("javascript");
   const [code, setCode] = useState(getDefaultCodeForLanguage("javascript"));
@@ -109,7 +136,7 @@ export default function App() {
     setReview("");
   }
 
-  // If still loading auth
+  // Auth loading
   if (isLoading) return <h2 style={{ textAlign: "center" }}>Loading...</h2>;
   if (!isAuthenticated) return null;
 
@@ -121,36 +148,56 @@ export default function App() {
 
       <Header />
 
-      <Routes>
-        {/* ------------------- MAIN PLAYGROUND PAGE ------------------- */}
-        <Route
-          path="/"
-          element={
-            <main>
-              <LeftPanel
-                language={language}
-                code={code}
-                setCode={setCode}
-                isReviewing={isReviewing}
-                reviewCode={reviewCode}
-                handleLanguageChange={handleLanguageChange}
-              />
+      {/* SMOOTH PAGE TRANSITIONS */}
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
 
-              <RightPanel
-                isReviewing={isReviewing}
-                review={review}
-                applyCorrectedCode={applyCorrectedCode}
-              />
-            </main>
-          }
-        />
+          {/* ------------------- MAIN PLAYGROUND ------------------- */}
+          <Route
+            path="/"
+            element={
+              <PageWrapper>
+                <main>
+                  <LeftPanel
+                    language={language}
+                    code={code}
+                    setCode={setCode}
+                    isReviewing={isReviewing}
+                    reviewCode={reviewCode}
+                    handleLanguageChange={handleLanguageChange}
+                  />
 
-        {/* ------------------- DOCS PAGE ------------------- */}
-        <Route path="/docs" element={<Docs />} />
+                  <RightPanel
+                    isReviewing={isReviewing}
+                    review={review}
+                    applyCorrectedCode={applyCorrectedCode}
+                  />
+                </main>
+              </PageWrapper>
+            }
+          />
 
-        {/* ------------------- CHANGELOG PAGE ------------------- */}
-        <Route path="/changelog" element={<Changelog />} />
-      </Routes>
+          {/* ------------------- DOCS ------------------- */}
+          <Route
+            path="/docs"
+            element={
+              <PageWrapper>
+                <Docs />
+              </PageWrapper>
+            }
+          />
+
+          {/* ------------------- CHANGELOG ------------------- */}
+          <Route
+            path="/changelog"
+            element={
+              <PageWrapper>
+                <Changelog />
+              </PageWrapper>
+            }
+          />
+        </Routes>
+      </AnimatePresence>
     </div>
   );
 }
