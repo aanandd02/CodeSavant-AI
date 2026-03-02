@@ -89,12 +89,7 @@ export default function App() {
     }
   }, [isAuthenticated, isLoading, loginWithRedirect]);
 
-  // Smart base URL
-  const BASE_URL =
-    import.meta.env.VITE_API_BASE_URL ||
-    (window.location.hostname === "localhost"
-      ? "http://localhost:3000"
-      : "https://codesavant-ai.onrender.com");
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   // Run Review
   async function reviewCode() {
