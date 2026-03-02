@@ -15,6 +15,7 @@
     "express-rate-limit": "^8.2.1",
     "langchain": "^0.2.16",
     "morgan": "^1.10.1",
-    "openai": "^6.25.0"
+    "openai": "^6.25.0",
+    "serverless-http": "^4.0.0"
   }
 }
