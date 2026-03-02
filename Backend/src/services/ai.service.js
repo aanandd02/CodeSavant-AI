@@ -1,47 +1,42 @@
-// src/services/ai.service.js
-const { ChatGoogleGenerativeAI } = require("@langchain/google-genai");
-const { ChatPromptTemplate } = require("@langchain/core/prompts");
+const OpenAI = require("openai");
 
-const model = new ChatGoogleGenerativeAI({
-  model: "gemini-2.0-flash",
-  apiKey: process.env.GOOGLE_GEMINI_KEY,
+const client = new OpenAI({
+  apiKey: process.env.GROQ_API_KEY,
+  baseURL: "https://api.groq.com/openai/v1",
 });
-
-const reviewPrompt = ChatPromptTemplate.fromMessages([
-  [
-    "system",
-    `
-    You are a Senior Software Engineer (10+ Years Experience).
-    Review the code carefully.
-
-    Tasks:
-    1. Detect mistakes (syntax, undefined vars, logical/performance issues).
-    2. Suggest improvements (best practices, readability, optimization).
-    3. Always provide the final corrected code ONLY inside one code block.
-       ❌ Do NOT write any extra heading like "Corrected Code" etc.
-    4. Format response as:
-       - **Mistakes/Issues**
-       - **Improvements**
-       - Then the corrected code block.
-  `,
-  ],
-  ["human", "{code}"],
-]);
 
 async function generateReview(code) {
   try {
-    const chain = reviewPrompt.pipe(model);
-    const response = await chain.invoke({ code });
-    let content = response.content;
+    const response = await client.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [
+        {
+          role: "system",
+          content: `
+You are a Senior Software Engineer (10+ Years Experience).
 
-    // Clean formatting
-    content = content.replace(/(\*\*Corrected Code\*\*:?)/gi, "").trim();
-    content = content.replace(/(\*\*Improved Code\*\*:?)/gi, "").trim();
+Tasks:
+1. Detect mistakes (syntax, undefined vars, logical/performance issues).
+2. Suggest improvements (best practices, readability, optimization).
+3. Always provide the final corrected code ONLY inside one code block.
+4. Format response as:
+   - **Mistakes/Issues**
+   - **Improvements**
+   - Then the corrected code block.
+          `,
+        },
+        {
+          role: "user",
+          content: code,
+        },
+      ],
+      temperature: 0.3,
+    });
 
-    return content;
-  } catch (err) {
-    console.error("💥 Gemini AI Error:", err.message);
-    throw err;
+    return response.choices[0].message.content;
+  } catch (error) {
+    console.error("🔥 Groq AI Error:", error.message);
+    throw error;
   }
 }
 

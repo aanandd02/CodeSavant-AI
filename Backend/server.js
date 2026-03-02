@@ -1,4 +1,3 @@
-// server.js
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
@@ -8,13 +7,11 @@ const aiRoutes = require("./src/routes/ai.routes");
 
 const app = express();
 
-// -------------------- Environment --------------------
 const PORT = process.env.PORT || 3000;
 
-// -------------------- CORS Configuration --------------------
 const allowedOrigins = [
-  "http://localhost:5173", // for local frontend (Vite default port)
-  "https://codesavant-ai-frontend.onrender.com", // deployed frontend
+  "http://localhost:5173", 
+  "https://codesavant-ai-frontend.onrender.com",
 ];
 
 app.use(
@@ -31,31 +28,27 @@ app.use(
   })
 );
 
-// -------------------- Middlewares --------------------
 app.use(express.json());
 app.use(morgan("dev"));
 
 app.use(
   rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
+    windowMs: 15 * 60 * 1000,
     max: 100,
     message: { error: "Too many requests, please try again later." },
   })
 );
 
-// -------------------- Routes --------------------
 app.get("/", (req, res) => {
   res.send("✅ CodeSavant-AI Backend running successfully!");
 });
 
 app.use("/ai", aiRoutes);
 
-// -------------------- Fallback Route --------------------
 app.use("*", (req, res) => {
   res.status(404).json({ error: "Route not found." });
 });
 
-// -------------------- Start Server --------------------
 app.listen(PORT, () => {
   console.log(`🚀 Server live on port ${PORT}`);
 });
