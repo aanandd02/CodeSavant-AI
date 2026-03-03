@@ -122,6 +122,11 @@
   border-top: 1px dashed rgba(75, 85, 99, 0.7);
 }
 
+.inline-fix-note {
+  margin: 0 0 10px;
+  color: #d1d5db;
+}
+
 /* Glow animation when corrected code appears */
 .glow-on-enter {
   animation: glowPulse 1.4s ease-out;

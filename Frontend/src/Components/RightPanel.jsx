@@ -63,6 +63,9 @@ function RightPanel({ isReviewing, review, applyCorrectedCode }) {
     .split(/\n(?=[🔴💡🛠])/)
     .map((s) => s.trim())
     .filter(Boolean);
+  const hasFixSection = sections.some((section) => section.startsWith("🛠"));
+  const displaySections =
+    fixedCode && !hasFixSection ? [...sections, "🛠 Corrected Code"] : sections;
 
   return (
     <section className="right-panel">
@@ -73,7 +76,7 @@ function RightPanel({ isReviewing, review, applyCorrectedCode }) {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.35 }}
         >
-          {sections.map((section, idx) => {
+          {displaySections.map((section, idx) => {
             let className = "section-neutral";
             let sectionTitle = "Review";
             let sectionEmoji = "🧾";
@@ -144,60 +147,53 @@ function RightPanel({ isReviewing, review, applyCorrectedCode }) {
                   <span>{sectionEmoji}</span> {sectionTitle}
                 </h4>
                 <ReactMarkdown>{cleanText}</ReactMarkdown>
+
+                {className === "section-fix" && fixedCode && (
+                  <div className="fixed-code-block">
+                    <p className="inline-fix-note">
+                      Click apply to replace your code automatically.
+                    </p>
+
+                    <motion.div
+                      className="scrollable-code"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.15, duration: 0.35 }}
+                    >
+                      <SyntaxHighlighter
+                        language="javascript"
+                        style={vscDarkPlus}
+                        showLineNumbers
+                      >
+                        {fixedCode}
+                      </SyntaxHighlighter>
+                    </motion.div>
+
+                    <div className="button-group">
+                      <motion.button
+                        className="copy-code-btn"
+                        whileTap={{ scale: 0.9 }}
+                        whileHover={{ scale: 1.05 }}
+                        onClick={() => navigator.clipboard.writeText(fixedCode)}
+                      >
+                        Copy
+                      </motion.button>
+
+                      <motion.button
+                        className="apply-code-btn"
+                        whileTap={{ scale: 0.9 }}
+                        whileHover={{ scale: 1.05 }}
+                        onClick={() => applyCorrectedCode(fixedCode)}
+                      >
+                        Apply Fix
+                      </motion.button>
+                    </div>
+                  </div>
+                )}
               </motion.div>
             );
           })}
         </motion.div>
-
-        {/* ------------ FIXED CODE BLOCK ------------ */}
-        {fixedCode && (
-          <motion.div
-            className="fixed-code-block glow-on-enter"
-            initial={{ opacity: 0, y: 20, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.45, ease: "easeOut" }}
-          >
-            <div className="fixed-header">
-              <h3>✨ Corrected / Improved Code</h3>
-              <p>Click apply to replace your code automatically.</p>
-            </div>
-
-            <motion.div
-              className="scrollable-code"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.45 }}
-            >
-              <SyntaxHighlighter
-                language="javascript"
-                style={vscDarkPlus}
-                showLineNumbers
-              >
-                {fixedCode}
-              </SyntaxHighlighter>
-            </motion.div>
-
-            <div className="button-group">
-              <motion.button
-                className="copy-code-btn"
-                whileTap={{ scale: 0.9 }}
-                whileHover={{ scale: 1.05 }}
-                onClick={() => navigator.clipboard.writeText(fixedCode)}
-              >
-                Copy
-              </motion.button>
-
-              <motion.button
-                className="apply-code-btn"
-                whileTap={{ scale: 0.9 }}
-                whileHover={{ scale: 1.05 }}
-                onClick={() => applyCorrectedCode(fixedCode)}
-              >
-                Apply Fix
-              </motion.button>
-            </div>
-          </motion.div>
-        )}
       </AnimatePresence>
     </section>
   );
