@@ -92,7 +92,41 @@ function RightPanel({ isReviewing, review, applyCorrectedCode }) {
               sectionEmoji = "🛠️";
             }
 
-            const cleanText = section.replace(/^[🔴💡🛠]\s?/, "").trim();
+            const removeDuplicateHeading = (text) => {
+              const lines = text
+                .split("\n")
+                .map((line) => line.trim())
+                .filter(Boolean);
+
+              if (lines.length === 0) return "";
+
+              const firstLine = lines[0]
+                .toLowerCase()
+                .replace(/^[^a-z]+/, "")
+                .replace(/[:\-\s]+$/, "")
+                .trim();
+
+              const headingLabels = [
+                "mistake",
+                "mistakes",
+                "improvement",
+                "improvements",
+                "suggestion",
+                "suggestions",
+                "corrected code",
+                "fixed code",
+              ];
+
+              if (headingLabels.includes(firstLine)) {
+                lines.shift();
+              }
+
+              return lines.join("\n").trim();
+            };
+
+            const cleanText = removeDuplicateHeading(
+              section.replace(/^[🔴💡🛠]\s?/, "").trim()
+            );
 
             return (
               <motion.div
