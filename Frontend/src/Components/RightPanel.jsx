@@ -75,9 +75,22 @@ function RightPanel({ isReviewing, review, applyCorrectedCode }) {
         >
           {sections.map((section, idx) => {
             let className = "section-neutral";
+            let sectionTitle = "Review";
+            let sectionEmoji = "🧾";
             if (section.startsWith("🔴")) className = "section-errors";
             else if (section.startsWith("💡")) className = "section-suggestions";
             else if (section.startsWith("🛠")) className = "section-fix";
+
+            if (className === "section-errors") {
+              sectionTitle = "Mistakes";
+              sectionEmoji = "🔴";
+            } else if (className === "section-suggestions") {
+              sectionTitle = "Improvements";
+              sectionEmoji = "💡";
+            } else if (className === "section-fix") {
+              sectionTitle = "Corrected Code";
+              sectionEmoji = "🛠️";
+            }
 
             const cleanText = section.replace(/^[🔴💡🛠]\s?/, "").trim();
 
@@ -93,6 +106,9 @@ function RightPanel({ isReviewing, review, applyCorrectedCode }) {
                   delay: idx * 0.07,
                 }}
               >
+                <h4 className="review-section-title">
+                  <span>{sectionEmoji}</span> {sectionTitle}
+                </h4>
                 <ReactMarkdown>{cleanText}</ReactMarkdown>
               </motion.div>
             );
