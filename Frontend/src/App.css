@@ -72,9 +72,13 @@ body {
 
 /* Main shell */
 .app-shell {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+.app-shell-playground {
+  height: 100vh;
   overflow: hidden;
 }
 
@@ -94,7 +98,7 @@ main {
 
 /* Two-panel on mobile */
 @media (max-width: 900px) {
-  .app-shell {
+  .app-shell-playground {
     height: auto;
     min-height: 100vh;
     overflow: visible;

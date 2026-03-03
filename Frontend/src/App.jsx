@@ -16,16 +16,16 @@ import Changelog from "./pages/Changelog";
 import { AnimatePresence, motion } from "framer-motion";
 
 // -------------------------- Page Wrapper (NO SHRINKING + SMOOTH) --------------------------
-function PageWrapper({ children }) {
+function PageWrapper({ children, lockLayout = false }) {
   return (
     <motion.div
       style={{
         width: "100%",
         flex: 1,
-        minHeight: 0,
+        minHeight: lockLayout ? 0 : "auto",
         display: "flex",
         flexDirection: "column",
-        overflow: "hidden",
+        overflow: lockLayout ? "hidden" : "visible",
       }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -82,6 +82,7 @@ export default function App() {
   const [code, setCode] = useState(getDefaultCodeForLanguage("javascript"));
   const [review, setReview] = useState("");
   const [isReviewing, setIsReviewing] = useState(false);
+  const isPlaygroundRoute = location.pathname === "/";
 
   // Auto login
   useEffect(() => {
@@ -138,7 +139,7 @@ export default function App() {
 
   // ---------------------------------- UI -----------------------------------
   return (
-    <div className="app-shell">
+    <div className={`app-shell ${isPlaygroundRoute ? "app-shell-playground" : ""}`}>
       <div className="app-bg" />
       <div className="app-overlay" />
 
@@ -152,7 +153,7 @@ export default function App() {
           <Route
             path="/"
             element={
-              <PageWrapper>
+              <PageWrapper lockLayout>
                 <main>
                   <LeftPanel
                     language={language}
