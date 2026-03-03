@@ -72,26 +72,38 @@ body {
 
 /* Main shell */
 .app-shell {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 /* Main layout */
 main {
   flex: 1;
+  min-height: 0;
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 18px 18px 40px;
+  padding: 18px;
   display: flex;
   gap: 18px;
+  overflow: hidden;
+  align-items: stretch;
 }
 
 /* Two-panel on mobile */
 @media (max-width: 900px) {
+  .app-shell {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
   main {
     flex-direction: column;
     padding-inline: 14px;
+    overflow: visible;
   }
 }
 

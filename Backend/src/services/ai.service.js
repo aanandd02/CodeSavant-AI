@@ -5,7 +5,11 @@ const client = new OpenAI({
   baseURL: "https://api.groq.com/openai/v1",
 });
 
-async function generateReview(code) {
+async function generateReview(code, language = "javascript") {
+  const allowedLanguages = ["javascript", "c", "cpp", "java"];
+  if (!allowedLanguages.includes(language)) {
+    language = "javascript";
+  }
   try {
     const response = await client.chat.completions.create({
       model: "llama-3.3-70b-versatile",
@@ -13,16 +17,19 @@ async function generateReview(code) {
         {
           role: "system",
           content: `
-You are a Senior Software Engineer (10+ Years Experience).
+You are a Senior ${language} Software Engineer (10+ Years Experience).
+
+Review the given ${language} code.
 
 Tasks:
-1. Detect mistakes (syntax, undefined vars, logical/performance issues).
-2. Suggest improvements (best practices, readability, optimization).
-3. Always provide the final corrected code ONLY inside one code block.
-4. Format response as:
-   - **Mistakes/Issues**
-   - **Improvements**
-   - Then the corrected code block.
+1. Detect syntax errors specific to ${language}.
+2. Detect logical or performance issues.
+3. Suggest best practices for ${language}.
+4. Always provide the final corrected ${language} code ONLY inside one code block.
+5. Format response using:
+   🔴 Mistakes
+   💡 Improvements
+   🛠 Corrected Code
           `,
         },
         {

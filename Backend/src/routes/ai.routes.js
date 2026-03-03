@@ -6,13 +6,13 @@ const router = express.Router();
 
 router.post("/get-review", async (req, res) => {
   try {
-    const { code } = req.body;
+    const { code, language } = req.body;
 
     if (!code || typeof code !== "string") {
       return res.status(400).json({ error: "Valid 'code' is required." });
     }
 
-    const review = await aiService(code);
+    const review = await aiService(code, language);
     res.json({ review });
   } catch (error) {
     console.error("🔥 AI Review Error:", error);

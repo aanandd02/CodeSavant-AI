@@ -1,4 +1,5 @@
 require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
@@ -8,6 +9,9 @@ const serverless = require("serverless-http");
 const aiRoutes = require("./src/routes/ai.routes");
 
 const app = express();
+
+/* ✅ IMPORTANT FOR AWS */
+app.set("trust proxy", 1);
 
 const allowedOrigins = [
   "http://localhost:5173",
@@ -38,4 +42,6 @@ app.get("/", (req, res) => {
 
 app.use("/ai", aiRoutes);
 
-module.exports.handler = serverless(app);
+module.exports.handler = serverless(app, {
+  basePath: "/default",
+});

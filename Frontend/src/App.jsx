@@ -21,10 +21,11 @@ function PageWrapper({ children }) {
     <motion.div
       style={{
         width: "100%",
-        height: "100%",
         flex: 1,
+        minHeight: 0,
         display: "flex",
         flexDirection: "column",
+        overflow: "hidden",
       }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
