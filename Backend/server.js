@@ -10,7 +10,6 @@ const aiRoutes = require("./src/routes/ai.routes");
 
 const app = express();
 
-/* ✅ IMPORTANT FOR AWS */
 app.set("trust proxy", 1);
 
 const allowedOrigins = [

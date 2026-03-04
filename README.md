@@ -1,125 +1,120 @@
 
-# CodeSavant-AI  
+# CodeSavant-AI
 
-## 🚀 Project Overview  
-**CodeSavant-AI** is an **AI-powered code review platform** built with **LangChain + Google Gemini LLM** and **Node.js**.  
+CodeSavant-AI is an AI-powered code review application where users submit code, select a language, and receive structured review feedback.
 
-It enables developers to get **instant AI-generated feedback** on their code in real-time — with **no database storage**.  
-Authentication is handled via **Google OAuth 2.0 + JWT** for secure, one-click login.  
+## Project Structure
 
-👉 **Live Demo:** [CodeSavant-AI](https://codesavant-ai-frontend.onrender.com)  
+- `Frontend/`: React + Vite client application
+- `Backend/`: Express API wrapped for serverless execution
 
----
+## Tech Stack (Current Implementation)
 
-## 🛠️ Tech Stack  
-- **Frontend:** React.js (Vite + Tailwind)  
-- **Backend:** Node.js, Express.js  
-- **AI Integration:** Google Gemini AI (via **LangChain**)  
-- **Authentication:** Google OAuth 2.0 + JWT  
-- **Hosting:** Render (Frontend + Backend)  
-- **API-Based Data Flow:** No Database Required  
+- Frontend: React 19, Vite, React Router, Auth0 React SDK
+- Editor and rendering: `react-simple-code-editor`, Prism, `react-syntax-highlighter`, `react-markdown`
+- UI and animation: Framer Motion, custom CSS
+- Backend: Node.js, Express, CORS, Morgan, `express-rate-limit`, `serverless-http`
+- AI provider: Groq Chat Completions (`llama-3.3-70b-versatile`) via OpenAI-compatible SDK
 
----
+## Core Features
 
-## ✨ Features  
-- 🔑 **Google OAuth Login/Signup** (JWT-secured, no DB).  
-- 🤖 **LangChain-powered AI Code Review** using Gemini LLM.  
-- ⚡ **Real-time analysis & feedback** via APIs.  
-- 🎨 **Modern, responsive UI** with React + Tailwind.  
-- 🔒 **JWT Middleware** for protected routes.  
+- Auth0-based login flow on the frontend (`Auth0Provider` + `loginWithRedirect`)
+- AI code review request from frontend to backend API
+- Supported languages:
+  - JavaScript
+  - C
+  - C++
+  - Java
+- Structured review output sections:
+  - `🔴 Mistakes`
+  - `💡 Improvements`
+  - `🛠 Corrected Code`
+- Copy and apply actions for corrected code in the review panel
+- Backend rate limiting: 100 requests per 15 minutes per IP
 
----
+## Backend API
 
-## 🏗️ Installation & Setup (Local Development)  
+Base route:
 
-### 1️⃣ Clone the Repository  
-```bash
-git clone https://github.com/Aanandshukla02/CodeSavant-AI.git
-cd CodeSavant-AI
-````
+- `/ai`
 
----
+Endpoint:
 
-### 2️⃣ Backend Setup
+- `POST /ai/get-review`
 
-```bash
-cd backend
-npm install
+Request body:
+
+```json
+{
+  "code": "string (required)",
+  "language": "javascript | c | cpp | java"
+}
 ```
 
-Create a `.env` file inside `backend/`:
+Response body:
+
+```json
+{
+  "review": "AI-generated markdown/text with one code block"
+}
+```
+
+Validation and behavior:
+
+- Returns `400` if `code` is missing or invalid
+- Falls back to `javascript` when `language` is unsupported
+- Returns `500` on internal processing errors
+
+## Environment Variables
+
+### Backend (`Backend/.env`)
 
 ```env
-PORT=8000
-CLIENT_ORIGIN=http://localhost:5173
-JWT_SECRET=super_long_random_string
-SESSION_SECRET=another_secret
-GOOGLE_CLIENT_ID=your_google_client_id.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-GOOGLE_CALLBACK_PATH=/auth/google/callback
+GROQ_API_KEY=your_groq_api_key
 ```
 
-Run backend server:
-
-```bash
-npx nodemon
-```
-
----
-
-### 3️⃣ Frontend Setup
-
-```bash
-cd frontend
-npm install
-```
-
-Create `.env` inside `frontend/`:
+### Frontend (`Frontend/.env`)
 
 ```env
-VITE_BACKEND_URL=http://localhost:8000
+VITE_API_BASE_URL=your_backend_base_url
 ```
 
-Run frontend:
+Example:
+
+```env
+VITE_API_BASE_URL=https://your-aws-api-url
+```
+
+## Deployment Notes
+
+The backend is configured for AWS serverless runtime.
+
+- `Backend/server.js` exports:
+  - `module.exports.handler = serverless(app, { basePath: "/default" })`
+- This matches an AWS Lambda style deployment behind an API Gateway path.
+- There is no `app.listen(...)` in the current backend file.
+
+## Frontend Local Setup
 
 ```bash
+cd Frontend
+npm install
 npm run dev
 ```
 
----
+## CORS Allowlist (Current Hardcoded Values)
 
-## 🔐 Google OAuth Setup
+- `http://localhost:5173`
+- `https://codesavant-ai-frontend.onrender.com`
 
-1. Go to **Google Cloud Console → APIs & Services → Credentials**.
+## Frontend Routes
 
-2. Create a new **OAuth 2.0 Client ID** (Application type: *Web Application*).
+- `/`: Playground (editor + AI review)
+- `/docs`: Documentation page
+- `/changelog`: Changelog page
 
-3. Add Authorized Redirect URI:
+## Implementation Notes
 
-   ```
-   http://localhost:8000/auth/google/callback
-   ```
-
-   *(For Production: use your Render backend URL, e.g. `https://codesavant-ai-backend.onrender.com/auth/google/callback`)*
-
-4. Copy **Client ID** & **Client Secret** → add to backend `.env`.
-
----
-
-## 📌 Usage
-
-1. Visit 👉 [CodeSavant-AI Live](https://codesavant-ai-frontend.onrender.com).
-2. Click **Continue with Google** to sign in.
-3. Paste your code snippet → **Submit for Review**.
-4. Get **AI-powered insights & suggestions instantly** ✨.
-
----
-
-## 📜 License
-
-This project is open-source under the **MIT License**.
-
----
-
-💡 Developed with ❤️ by [Aanand Shukla](https://github.com/Aanandshukla02) 🚀
-
+- No database is used in the current implementation.
+- No backend Google OAuth/JWT flow is present in the current implementation.
+- No LangChain/Gemini integration is present in the current implementation.
