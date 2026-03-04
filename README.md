@@ -112,9 +112,3 @@ npm run dev
 - `/`: Playground (editor + AI review)
 - `/docs`: Documentation page
 - `/changelog`: Changelog page
-
-## Implementation Notes
-
-- No database is used in the current implementation.
-- No backend Google OAuth/JWT flow is present in the current implementation.
-- No LangChain/Gemini integration is present in the current implementation.
