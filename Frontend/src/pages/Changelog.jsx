@@ -11,6 +11,15 @@ export default function Changelog() {
         </p>
 
         <section>
+          <h2>v1.0.4 — MySQL Language Support</h2>
+          <ul>
+            <li>Added MySQL in language selector</li>
+            <li>Enabled MySQL review support in backend validation</li>
+            <li>Updated docs and code highlighting for MySQL snippets</li>
+          </ul>
+        </section>
+
+        <section>
           <h2>v1.0.3 — UI Stability Upgrade</h2>
           <ul>
             <li>Fixed gradient jitter</li>

@@ -5,7 +5,7 @@ import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence } from "framer-motion";
 import "./RightPanel.css";
 
-function RightPanel({ isReviewing, review, applyCorrectedCode }) {
+function RightPanel({ isReviewing, review, language, applyCorrectedCode }) {
   // ------------ LOADING STATE ------------
   if (isReviewing) {
     return (
@@ -66,6 +66,8 @@ function RightPanel({ isReviewing, review, applyCorrectedCode }) {
   const hasFixSection = sections.some((section) => section.startsWith("🛠"));
   const displaySections =
     fixedCode && !hasFixSection ? [...sections, "🛠 Corrected Code"] : sections;
+
+  const highlighterLanguage = language === "mysql" ? "sql" : language;
 
   return (
     <section className="right-panel">
@@ -161,7 +163,7 @@ function RightPanel({ isReviewing, review, applyCorrectedCode }) {
                       transition={{ delay: 0.15, duration: 0.35 }}
                     >
                       <SyntaxHighlighter
-                        language="javascript"
+                        language={highlighterLanguage}
                         style={vscDarkPlus}
                         showLineNumbers
                       >

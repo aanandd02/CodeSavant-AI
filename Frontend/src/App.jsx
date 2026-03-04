@@ -51,6 +51,8 @@ const getDefaultCodeForLanguage = (lang) => {
       return `#include <iostream>\nusing namespace std;\nint main() {\n    cout << "Hello, world!";\n    return 0;\n}`;
     case "java":
       return `public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, world!");\n    }\n}`;
+    case "mysql":
+      return `SELECT u.id, u.name, COUNT(o.id) AS total_orders\nFROM users u\nLEFT JOIN orders o ON o.user_id = u.id\nGROUP BY u.id, u.name\nORDER BY total_orders DESC;`;
     default:
       return "";
   }
@@ -69,6 +71,10 @@ function isLikelyCode(input) {
     "printf",
     "console.log",
     "=>",
+    "select",
+    "from",
+    "where",
+    "join",
   ];
   return codeTokens.some((token) => input.includes(token));
 }
@@ -167,6 +173,7 @@ export default function App() {
                   <RightPanel
                     isReviewing={isReviewing}
                     review={review}
+                    language={language}
                     applyCorrectedCode={applyCorrectedCode}
                   />
                 </main>

@@ -9,6 +9,7 @@ import "./LeftPanel.css";
 import "prismjs/components/prism-c";
 import "prismjs/components/prism-cpp";
 import "prismjs/components/prism-java";
+import "prismjs/components/prism-sql";
 
 function LeftPanel({
   language,
@@ -43,6 +44,7 @@ function LeftPanel({
               <option value="c">C</option>
               <option value="cpp">C++</option>
               <option value="java">Java</option>
+              <option value="mysql">MySQL</option>
             </select>
           </div>
 

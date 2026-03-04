@@ -25,6 +25,7 @@ CodeSavant-AI is an AI-powered code review application where users submit code, 
   - C
   - C++
   - Java
+  - MySQL
 - Structured review output sections:
   - `🔴 Mistakes`
   - `💡 Improvements`
@@ -47,7 +48,7 @@ Request body:
 ```json
 {
   "code": "string (required)",
-  "language": "javascript | c | cpp | java"
+  "language": "javascript | c | cpp | java | mysql"
 }
 ```
 

@@ -6,7 +6,7 @@ const client = new OpenAI({
 });
 
 async function generateReview(code, language = "javascript") {
-  const allowedLanguages = ["javascript", "c", "cpp", "java"];
+  const allowedLanguages = ["javascript", "c", "cpp", "java", "mysql"];
   if (!allowedLanguages.includes(language)) {
     language = "javascript";
   }

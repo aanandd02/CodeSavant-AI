@@ -25,6 +25,7 @@ export default function Docs() {
             <li>C</li>
             <li>C++</li>
             <li>Java</li>
+            <li>MySQL</li>
           </ul>
         </section>
 
